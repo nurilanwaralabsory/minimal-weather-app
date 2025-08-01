@@ -8,8 +8,8 @@ import 'package:http/http.dart' as http;
 class WeatherService {
   static const String baseUrl =
       'https://api.openweathermap.org/data/2.5/weather';
-  final String apiKey;
 
+  final String apiKey;
   WeatherService(this.apiKey);
 
   Future<Weather> getWeather(String cityName) async {
@@ -18,6 +18,7 @@ class WeatherService {
     );
 
     if (response.statusCode == 200) {
+      // akan mengembalikan objek Weather dari JSON sesuai dengan model yang sudah di definisikan
       return Weather.fromJson(jsonDecode(response.body));
     } else {
       throw Exception('Failed to load weather data');
@@ -25,27 +26,25 @@ class WeatherService {
   }
 
   Future<String> getCurrentCity() async {
-    // get permission from user
     LocationPermission permission = await Geolocator.checkPermission();
+
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
     }
 
-    // fetch the current position
     Position position = await Geolocator.getCurrentPosition(
-      locationSettings: const LocationSettings(
+      locationSettings: LocationSettings(
         accuracy: LocationAccuracy.high,
         distanceFilter: 10,
       ),
     );
 
-    // convert the location into a list of placemarks objects
     List<Placemark> placemarks = await placemarkFromCoordinates(
       position.latitude,
       position.longitude,
     );
 
-    String? city = placemarks[0].locality;
+    String? city = placemarks.first.locality;
 
     return city ?? 'Unknown City';
   }

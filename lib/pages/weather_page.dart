@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
 import 'package:minimal_weather_app/models/weather_model.dart';
 import 'package:minimal_weather_app/services/weather_service.dart';
+import 'package:lottie/lottie.dart';
 
 class WeatherPage extends StatefulWidget {
   const WeatherPage({super.key});
@@ -11,29 +11,22 @@ class WeatherPage extends StatefulWidget {
 }
 
 class _WeatherPageState extends State<WeatherPage> {
-  // api key
   final _weatherService = WeatherService('25878907f394d0294d73918bce10c08f');
   Weather? _weather;
 
-  // fetch weather
   _fetchWeather() async {
-    // get the current city
     String cityName = await _weatherService.getCurrentCity();
 
-    // get weather for city
     try {
       final weather = await _weatherService.getWeather(cityName);
       setState(() {
         _weather = weather;
       });
-    }
-    // any errors
-    catch (e) {
+    } catch (e) {
       print(e);
     }
   }
 
-  // weather animations
   String getWeatherAnimation(String? mainCondition) {
     if (mainCondition == null) return 'assets/sunny.json';
 
@@ -61,8 +54,6 @@ class _WeatherPageState extends State<WeatherPage> {
   @override
   void initState() {
     super.initState();
-
-    // fetch weather on startup
     _fetchWeather();
   }
 
@@ -73,17 +64,12 @@ class _WeatherPageState extends State<WeatherPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // city name
-            Text(_weather?.cityName ?? "Loading city..."),
+            Text(_weather?.cityName ?? 'Loading...'),
 
-            // animation
             Lottie.asset(getWeatherAnimation(_weather?.mainCondition)),
 
-            // temperature
             Text('${_weather?.temperature.round()}°C'),
-
-            // weather condition
-            Text(_weather?.mainCondition ?? ""),
+            Text(_weather?.mainCondition ?? ''),
           ],
         ),
       ),
